@@ -81,7 +81,7 @@ MainWindow::MainWindow(QWidget* parent)
 
             QString uuid = querys["uuid"];
 
-            sql = QString("delete from data(parentUuid,uuid,name,isFolder,md5,rootuuid) values ('%1','%2','%3',%4,'%5','%6')").
+            sql = QString("delete from data where uuid='%1'").
                   arg(uuid);
             qDebug() << sql;
             sqliteDao()->sqliteWrapper()->execute(sql);
