@@ -71,19 +71,20 @@ private slots:
     void on_btnDelete_clicked();
 
     void on_btnRefresh_clicked();
-
+    NetDiskClient* createNetDiskClient();
 
 
 
 
 private:
     Ui::MainWindow* ui;
-    NetDiskClient* m_netClient;
     QStandardItemModel* m_model;
     QStandardItemModel* m_fileModel;
     QStandardItemModel* m_transModel;
     QMap<QString, QString> m_Ids;
     QString m_parentId;
     LogoWidget* m_logoWidget;
+    QString m_ip;
+    int m_port;
 };
 #endif // MAINWINDOW_H

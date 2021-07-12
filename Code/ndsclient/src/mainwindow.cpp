@@ -7,13 +7,13 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui->setupUi(this);
 
-    m_netClient = new NetDiskClient(this);
+
     QByteArray retData;
     getHtmlData(this, GlobalData::baseUrl + "/getParams", retData);
     QJsonDocument jdoc = QJsonDocument::fromJson(retData);
     QJsonObject jobj = jdoc.object();
-    m_netClient->setIp(jobj["ip"].toString());
-    m_netClient->setPort(jobj["port"].toInt());
+    m_ip = jobj["ip"].toString();
+    m_port = jobj["port"].toInt();
 
 
     m_model = new QStandardItemModel(this);
@@ -81,6 +81,7 @@ QString MainWindow::addFile(QString parentUuid, QString name, QFileInfo& fileInf
     QString uuid = GlobalData::createUuid();
     QByteArray data;
     QString md5 = getFileMd5(fileInfo.absoluteFilePath());
+    NetDiskClient* m_netClient = createNetDiskClient();
     m_netClient->uploadFile(fileInfo.absoluteFilePath(), md5);
     getHtmlData(this, QString(GlobalData::baseUrl +
                               "/addData?parentUuid=%1&uuid=%2&name=%3&isFolder=0&md5=%4&rootuuid=%5")
@@ -392,6 +393,7 @@ void MainWindow::on_tvFiles_doubleClicked(const QModelIndex& index)
         QDir dir;
         dir.mkpath(fileInfo.absolutePath());
         qDebug() << fileInfo.absolutePath();
+        NetDiskClient* m_netClient = createNetDiskClient();
         m_netClient->downloadFileByMd5(md5, fileName);
         recordUploadDownLoad(name, md5, "下载");
         QDesktopServices::openUrl(QUrl::fromLocalFile(fileName));
@@ -445,6 +447,14 @@ void MainWindow::on_btnDelete_clicked()
 void MainWindow::on_btnRefresh_clicked()
 {
     emit ui->tvLeft->clicked(ui->tvLeft->currentIndex());
+}
+
+NetDiskClient* MainWindow::createNetDiskClient()
+{
+    NetDiskClient* client = new NetDiskClient();
+    client->setIp(m_ip);
+    client->setPort(m_port);
+    return client;
 }
 
 
