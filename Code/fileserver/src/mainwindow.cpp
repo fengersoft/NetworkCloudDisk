@@ -220,6 +220,7 @@ void MainWindow::onServerReadyRead()
         do
         {
             data.append(socket->readAll());
+            QApplication::processEvents();
         }
         while (socket->waitForReadyRead(10));
         QCryptographicHash md5(QCryptographicHash::Md5);
@@ -249,6 +250,10 @@ void MainWindow::onServerReadyRead()
         file.open(QIODevice::ReadOnly);
         QByteArray data = file.readAll();
         socket->write(data);
+        while (socket->waitForBytesWritten())
+        {
+            QApplication::processEvents();
+        }
         file.close();
     }
 }
